@@ -1,0 +1,16 @@
+uuid: 71de67a0-9a45-403b-9d22-b8a5a569c405
+langcode: en
+status: true
+dependencies: {  }
+name: unsplash
+label: 'Unsplash (800x800)'
+effects:
+  782f91e5-e65c-4ee7-bc98-cbc78aba5c34:
+    uuid: 782f91e5-e65c-4ee7-bc98-cbc78aba5c34
+    id: image_scale
+    weight: 1
+    data:
+      width: 800
+      height: 800
+      upscale: false
+

@@ -3,44 +3,81 @@
 namespace Drupal\unsplash_stream_test\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Symfony\Component\HttpFoundation\Response;
+use Drupal\Core\Image\ImageFactory;
+use Drupal\Core\Render\Renderer;
+use Drupal\image\Entity\ImageStyle;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Class UnsplashTestController.
  */
 class UnsplashTestController extends ControllerBase {
-  
-  public function deliver($id) {
-    $raw_image = file_get_contents('unsplash://' . $id);
-    $file = file_save_data($raw_image, "public://$id.jpg", FILE_EXISTS_REPLACE);
 
-    $variables = array(
-      'style_name' => 'large',
-      'uri' => $file->getFileUri(),
+  /**
+   * Drupal\Core\Render\Renderer definition.
+   *
+   * @var \Drupal\Core\Render\Renderer
+   */
+  protected $renderer;
+
+  /**
+   * Drupal\Core\Image\ImageFactory definition.
+   *
+   * @var \Drupal\Core\Image\ImageFactory
+   */
+  protected $imageFactory;
+
+  /**
+   * UnsplashTestController constructor.
+   *
+   * @param \Drupal\Core\Render\Renderer $renderer
+   * @param \Drupal\Core\Image\ImageFactory $image_factory
+   */
+  public function __construct(Renderer $renderer, ImageFactory $image_factory) {
+    $this->renderer = $renderer;
+    $this->imageFactory = $image_factory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('renderer'),
+      $container->get('image.factory')
     );
+  }
 
-    $image = \Drupal::service('image.factory')->get($file->getFileUri());
-    if ($image->isValid()) {
-      $variables['width'] = $image->getWidth();
-      $variables['height'] = $image->getHeight();
+  public function deliver($id, $image_style) {
+    $raw_image = file_get_contents('unsplash://' . $id);
+    $filename = $id . '.jpg';
+    $file = file_save_data($raw_image, "public://$filename", FILE_EXISTS_REPLACE);
+    $file_uri = $file->getFileUri();
+    if ($image_style === 'none') {
+      $variables = ['title' => $filename, 'uri' => $file_uri];
+      $image = $this->imageFactory->get($file_uri);
+      if ($image->isValid()) {
+        $variables['width'] = $image->getWidth();
+        $variables['height'] = $image->getHeight();
+      }
+      else {
+        $variables['width'] = $variables['height'] = NULL;
+      }
+      $image_render_array = [
+        '#theme' => 'image_style',
+        '#style_name' => 'unsplash',
+        '#title' => $variables['title'],
+        '#uri' => $variables['uri'],
+        '#width' => $variables['width'],
+        '#height' => $variables['height'],
+      ];
+      $this->renderer->addCacheableDependency($image_render_array, $file);
+      return $image_render_array;
     }
     else {
-      $variables['width'] = $variables['height'] = NULL;
+      return new RedirectResponse(ImageStyle::load($image_style)->buildUrl($file_uri));
     }
-
-    $image_render_array = [
-      '#theme' => 'image_style',
-      '#width' => $variables['width'],
-      '#height' => $variables['height'],
-      '#style_name' => $variables['style_name'],
-      '#uri' => $variables['uri'],
-    ];
-
-    $renderer = \Drupal::service('renderer');
-    $renderer->addCacheableDependency($image_render_array, $file);
-
-    return $image_render_array;
-
   }
 
 }

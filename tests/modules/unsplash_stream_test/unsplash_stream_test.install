@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * Implements hook_uninstall().
+ */
+function unsplash_stream_test_uninstall() {
+  $config_path = drupal_get_path('module', 'unsplash_stream_test') . '/config/install';
+  $files = file_scan_directory($config_path, '/.*\.yml$/');
+  $configs = array_map(function ($file) {
+    return $file->name;
+  }, $files);
+  $config_factory = \Drupal::configFactory();
+  foreach ($configs as $config_path => $config_name) {
+    $config_factory->getEditable($config_name)->delete();
+  }
+}
