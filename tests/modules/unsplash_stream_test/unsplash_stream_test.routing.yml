@@ -1,0 +1,8 @@
+
+unsplash_stream_test.unsplash_test_controller_deliver:
+  path: '/admin/unsplash/{id}'
+  defaults:
+    _controller: '\Drupal\unsplash_stream_test\Controller\UnsplashTestController::deliver'
+    _title: 'Unsplash Source'
+  requirements:
+    _permission: 'access content'

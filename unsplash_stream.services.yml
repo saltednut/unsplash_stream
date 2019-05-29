@@ -1,0 +1,5 @@
+services:
+  unsplash_stream.images_stream_wrapper:
+    class: Drupal\unsplash_stream\StreamWrapper\UnsplashImagesStreamWrapper
+    tags:
+      - { name: stream_wrapper, scheme: unsplash }

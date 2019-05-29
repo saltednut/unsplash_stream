@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains unsplash_stream.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function unsplash_stream_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the unsplash_stream module.
+    case 'help.page.unsplash_stream':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Stream wrapper for the Unsplash API') . '</p>';
+      return $output;
+
+    default:
+  }
+}

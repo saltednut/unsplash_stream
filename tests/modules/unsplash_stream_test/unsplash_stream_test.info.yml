@@ -1,0 +1,7 @@
+name: 'Unsplash Stream Test'
+type: module
+description: 'Test module for Unsplash Stream'
+core: 8.x
+package: 'Media'
+dependencies:
+  - unsplash_stream

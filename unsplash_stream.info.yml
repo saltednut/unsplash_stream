@@ -1,0 +1,7 @@
+name: 'Unsplash Stream'
+type: module
+description: 'Stream wrapper for the Unsplash API'
+core: 8.x
+package: 'Media'
+dependencies:
+  - image
