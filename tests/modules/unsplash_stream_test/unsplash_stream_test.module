@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @file
+ * Contains unsplash_stream_test.module.
+ */
+
+/**
+ * Implements hook_entity_presave().
+ *
+ * @param $entity
+ */
+function unsplash_stream_test_entity_presave($entity) {
+  /**
+   * Editor's note: This is an absolute hammer, intended only for testing purposes.
+   * A field base is provided in the module, in order to test one must add an
+   * instance of that field to an entity that also has an instance of field_image.
+   */
+  $types = ['node', 'media'];
+  $type = $entity->getEntityTypeId();
+  if (in_array($type, $types) && $entity->hasField('field_unsplash_image_id') && $entity->hasField('field_image')) {
+    $id = $entity->get('field_unsplash_image_id')->value;
+    $raw_image = file_get_contents('unsplash://' . $id);
+    $filename = $id . '.jpg';
+    $file = file_save_data($raw_image, "public://$filename", FILE_EXISTS_REPLACE);
+    $entity->field_image->setValue(['target_id' => $file->id()]);
+  }
+}
