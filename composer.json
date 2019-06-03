@@ -1,0 +1,13 @@
+{
+    "name": "brantwynn/unsplash_stream",
+    "description": "Unsplash stream wrapper for Drupal 8",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Brant Wynn",
+            "email": "brant@brantwynn.com"
+        }
+    ],
+    "require": {}
+}
