@@ -16,13 +16,20 @@ function unsplash_stream_test_entity_presave($entity) {
    * A field base is provided in the module, in order to test one must add an
    * instance of that field to an entity that also has an instance of field_image.
    */
-  $types = ['node', 'media'];
   $type = $entity->getEntityTypeId();
-  if (in_array($type, $types) && $entity->hasField('field_unsplash_image_id') && $entity->hasField('field_image')) {
-    $id = $entity->get('field_unsplash_image_id')->value;
+  $types = ['node', 'media'];
+  $unsplash_field = 'field_unsplash_image_id';
+  $image_field = 'field_image';
+  if (in_array($type, $types)
+      && $entity->hasField($unsplash_field)
+      && !$entity->get($unsplash_field)->isEmpty()
+      && $entity->hasField($image_field)
+  ) {
+    $id = $entity->get($unsplash_field)->value;
     $raw_image = file_get_contents('unsplash://' . $id);
     $filename = $id . '.jpg';
     $file = file_save_data($raw_image, "public://$filename", FILE_EXISTS_REPLACE);
-    $entity->field_image->setValue(['target_id' => $file->id()]);
+    $entity->$image_field->setValue(['target_id' => $file->id()]);
   }
 }
+
